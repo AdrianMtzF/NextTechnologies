@@ -83,7 +83,7 @@ def transform_staging_to_cargo() -> tuple[int, int]:
 
         conn.execute(text('TRUNCATE TABLE public."Cargo";'))
         result = conn.execute(text(insert_sql))
-        inserted = result.rowcount  # filas insertadas
+        inserted = result.rowcount
 
         total_cargo = conn.execute(text('SELECT COUNT(*) FROM public."Cargo";')).scalar_one()
         total_stg   = conn.execute(text('SELECT COUNT(*) FROM entrada.raw_charges;')).scalar_one()

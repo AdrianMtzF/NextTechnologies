@@ -1,9 +1,17 @@
+# --- ETL ---
 pandas==2.2.2
 pyarrow>=20,<22
 SQLAlchemy==2.0.31
 psycopg[binary]>=3.1.18
 click==8.1.7
-pytest==8.2.0
 python-dotenv==1.0.1
+
+# --- API ---
 fastapi==0.115.0
 uvicorn[standard]==0.30.1
+pydantic>=2.11.0
+httpx>=0.28.0
+requests>=2.32.0
+
+# --- Testing ---
+pytest>=8.2.0
