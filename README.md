@@ -1,24 +1,40 @@
+Repositorio NextTecnology — Prueba Técnica
+
+Este repositorio contiene dos proyectos independientes como parte de una prueba técnica:
+
+ETL Project (etl_project/) → Implementa un pipeline de extracción, transformación y carga de datos.
+
+API Project (api_project/) → Implementa una API REST con FastAPI para gestión de números.
+
+Ambos proyectos comparten:
+
+Un único entorno virtual (.venv/).
+
+Un único archivo de dependencias (requirements.txt).
+
+Por lo tanto, no es necesario instalar dependencias dos veces. Una vez creado y activado el entorno e instaladas las librerías, se puede ejecutar tanto el pipeline ETL como la API.
+
 Prueba Técnica – Proceso ETL
 Descripción
-Este prueba implementa un proceso ETL (Extract, Transform, Load) para cargar, limpiar, transformar y dispersar información de cargos de dos compañías ficticias.
-El objetivo es:
+Este proyecto implementa un proceso ETL (Extract, Transform, Load) para cargar, limpiar, transformar y normalizar información de cargos de dos compañías ficticias.
+Objetivos:
+Cargar datos crudos desde un CSV hacia una base de datos.
 
-Cargar datos crudos desde CSV a una base de datos.
 
-
-Transformarlos en un esquema estandarizado.
+Transformarlos a un esquema estandarizado.
 
 
 Normalizarlos en entidades (companies, charges).
 
 
-Crear una vista SQL para analizar el monto total transaccionado por día y compañía.
+Crear una vista SQL para analizar el monto total transaccionado por compañía y día.
+
 
 Tecnologías utilizadas
-Python 3.11+
+Python 3.13
 
 
-PostgreSQL 15 (Docker)
+PostgreSQL 15 (contenedor Docker)
 
 
 SQLAlchemy (ORM / conexión a BD)
@@ -31,12 +47,11 @@ Docker Compose (orquestación de servicios)
 
 
 
-
 Instalación y ejecución
-
-1. Clonar repositorio
+1. Clonar el repositorio
 git clone git@github.com:AdrianMtzF/NextTecnology.git
 cd NextTecnology
+
 
 
 
@@ -47,21 +62,35 @@ source .venv/bin/activate   # Linux/Mac
 .venv\Scripts\activate      # Windows
 
 
+
 3. Instalar dependencias
 pip install -r requirements.txt
 
 
-4. Levantar base de datos con Docker
+
+4. Configurar variables de entorno
+Copiar el archivo .env.example como .env y ajustar credenciales si es necesario.
+Ejemplo de configuración:
+POSTGRES_USER=etl_user
+POSTGRES_PASSWORD=etl_pass123
+POSTGRES_DB=etl_db
+DB_URL=postgresql+psycopg://etl_user:etl_pass123@localhost:5433/etl_db
+INPUT_CSV=data/docs/data_prueba_tecnica.csv
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5433
+
+
+5. Levantar la base de datos con Docker
 docker compose up -d
 
 
+6. Ejecutar el pipeline completo
+Estando en la carpeta NextTecnology: 
+cd NextTecnology
+python -m etl_project.scripts.run_pipeline
 
-5. Ejecutar pipeline completo
 
-python -m scripts.run_pipeline
-
-
-Aparecera una salida asi:
+Ejemplo de salida:
 Staging OK → insertadas: 10000 | en tabla: 10000
 Cargo OK → filas en staging: 10000 | filas cargadas a Cargo: 9992
 Dispersión OK → companies: 3 | charges: 9992
@@ -71,29 +100,41 @@ Staging: 10000 | Cargo: 9992 | Companies: 3 | Charges: 9992
 ==================================================
 
 
-
-
 Estructura del Proyecto
-NextTecnology/
-├─ .venv/                 # Entorno virtual
-├─ data/
-│  └─ docs/
-│     └─ data_prueba_tecnica.csv   # Dataset original
-├─ scripts/
-│  └─ run_pipeline.py     # Script principal
-├─ src/
-│  ├─ config.py           # Configuración general
-│  ├─ db.py               # Conexión a la base de datos
-│  ├─ etl_load.py         # Carga inicial a tabla staging
-│  ├─ etl.py              # Transformaciones de staging → Cargo
-│  ├─ etl_disperse.py     # Dispersión Cargo → companies & charges
-│  └─ __init__.py
-├─ tests/                
-├─ docker-compose.yml    
-├─ Dockerfile            
-├─ requirements.txt      
-├─ .env.example          
-└─ README.md             
+etl_project/
+│── config/                   
+│   ├── __init__.py
+│   ├── config.py             # Configuración de entorno
+│   └── db.py                 # Conexión a la base de datos
+│
+│── data/
+│   └── docs/                 # Archivos de entrada 
+│       └── __init__.py
+│
+│── model/
+│   ├── __init__.py
+│   ├── schemas.py            # Esquemas de validación SQLAlchemy
+│   └── sql_queries.py        # Queries SQL centralizadas
+│
+│── scripts/
+│   ├── __init__.py
+│   └── run_pipeline.py       # Script principal del pipeline ETL
+│
+│── services/
+│   ├── __init__.py
+│   └── cleaning_service.py   # Servicio de limpieza de datos
+│
+│── src/
+│   ├── __init__.py
+│   ├── etl_disperse.py       # Dispersión: Cargo → Companies & Charges
+│   ├── etl_load.py           # Carga inicial de datos
+│   └── etl_transform.py      # Transformaciones de datos
+│
+│── tests/                    
+│   └── __init__.py
+│
+└── __init__.py
+
 
 
 
@@ -101,37 +142,58 @@ NextTecnology/
 
 Etapas del ETL
 1.1 – Carga de información (Staging)
+Se insertan datos crudos del CSV en la tabla entrada.raw_charges.
 
-Los datos crudos del CSV se cargan a la tabla entrada.raw_charges.
-Se conserva todo tal cual para mantener trazabilidad.
+
+Se conserva el dataset sin alterar para mantener trazabilidad.
+
+
+
 
 1.2 – Extracción
+etl_load.py extrae datos del CSV con Pandas y los inserta en raw_charges.
 
-El script etl_load.py extrae los datos del CSV con Pandas.
-Se insertan en raw_charges.
-Se devuelve un conteo de filas cargadas vs existentes.
+
+Devuelve conteo de filas cargadas vs existentes.
+
 
 1.3 – Transformación (Cargo)
+Limpieza de datos desde raw_charges:
 
-Los datos de raw_charges se limpian:
-Se eliminan símbolos no numéricos en montos.
-Se normalizan IDs (24 caracteres).
-Se convierten fechas a timestamp.
-Se descartan registros inválidos.
-Se cargan en la tabla public."Cargo".
+
+Eliminación de símbolos no numéricos en montos.
+
+
+Normalización de IDs (24 caracteres).
+
+
+Conversión de fechas a timestamp.
+
+
+Filtrado de registros inválidos.
+
+
+Los resultados se cargan en public."Cargo".
+
 
 1.4 – Dispersión (Companies y Charges)
+Normalización de entidades:
 
-Se normalizan las entidades:
 
 companies: catálogo de compañías únicas.
+
+
 charges: cada cargo con referencia a companies.
-Integridad referencial: charges.company_id → companies.id.
 
 
-1.5 – Vista SQL
+Integridad referencial:
 
-Se creó una vista para obtener el monto total transaccionado por compañía y día:
+
+charges.company_id → companies.id.
+
+
+1.5 – Vista SQL (opcional, ejecución manual)
+Para reportes, se creó la vista public.v_company_daily_totals que devuelve los montos totales por día y compañía:
 CREATE OR REPLACE VIEW public.v_company_daily_totals AS
 SELECT
     c.id                AS company_id,
@@ -144,27 +206,46 @@ GROUP BY c.id, c.name, DATE(ch.created_at)
 ORDER BY transaction_day, company_name;
 
 
-
-
 Ejemplo de consulta:
 SELECT * FROM public.v_company_daily_totals;
 
 
-Resultado:
-
+Resultados esperados
 Staging: 10,000 filas insertadas.
-Cargo: ~9,992 filas válidas después de limpieza.
+
+
+Cargo: 9,992 filas válidas después de limpieza.
+
+
 Companies: 3 compañías únicas.
+
+
 Charges: 9,992 transacciones limpias.
-Vista: montos diarios agregados por compañía.
+
+
+Vista: totales diarios agregados por compañía.
+
+
+
+
 Decisiones técnicas
-Se eligió PostgreSQL por robustez en manejo de tipos, facilidad de modelado relacional y compatibilidad con Docker.
+PostgreSQL elegido por robustez y fácil integración con Docker.
 
 
-Se utilizó numeric(20,2) para evitar overflow en los montos.
+Uso de numeric(20,2) para evitar problemas de overflow en montos.
 
 
-Se normalizó el modelo a 3 tablas (companies, charges, Cargo) para mantener consistencia y facilitar reporting.
+Modelo normalizado en 3 tablas (companies, charges, Cargo) para garantizar consistencia y facilitar reportes.
+
+
+Notas finales
+Las credenciales dependen de lo configurado en el archivo .env.
+
+
+Para ingresar al contenedor(dependiendo de las credenciales):
+
+ docker exec -it etl_postgres psql -U etl_user -d etl_db
+Ejecutar la vista SQL solo es necesario una vez, no en cada corrida del pipeline.
 
 
 
@@ -190,45 +271,50 @@ cd NextTecnology/api_project
 
 
 
-Crear entorno virtual e instalar dependencias( en el dado caso que no lo hayas hecho):
+Crear entorno virtual e instalar dependencias:
 2. Crear entorno virtual
 python -m venv .venv
 source .venv/bin/activate   # Linux/Mac
 .venv\Scripts\activate      # Windows
 
 
+Nota: este entorno también se usa para el proyecto ETL, no es necesario crear dos entornos separados.
+
+
 3. Instalar dependencias
 pip install -r requirements.txt
 
 
-4. Levantar base de datos con Docker
-docker compose up -d
+4. Ejecutar el servidor de la API
+Desde la carpeta:
 
-
-5. Ejecutar el servidor
-
+cd api_project/:
 uvicorn app.main:app --reload
 
 
 
-6. Estructura del proyecto
+5. Estructura del proyecto
 
 
 api_project/
 │── app/
-│   ├── models/              
+│   ├── models/               # Modelos de datos
 │   │   ├── __init__.py
 │   │   └── number.py
 │   │
-│   ├── routes/             
+│   ├── routes/               # Definición de rutas
 │   │   ├── __init__.py
 │   │   └── number_route.py
 │   │
-│   ├── test/               
+│   ├── test/                 # Pruebas unitarias
 │   │   ├── __init__.py
 │   │   └── test_number.py
 │   │
-│   └── main.py             
+│   └── main.py               # Punto de entrada de la API
+│
+└── __init__.py
+
+           
 
 
 
@@ -242,11 +328,21 @@ Query Params
 
 number (int, requerido) → número a extraer.
 
-Ejemplo:
+Ejemplo con curl (Linux/Mac):
 
 curl -X POST "http://127.0.0.1:8000/numbers/extract/?number=20"
 
 
+Ejemplo con PowerShell (Windows):
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/numbers/extract/?number=20" -Method POST
+
+
+
+Ejemplo con Postman
+
+Método: POST
+
+URL: http://127.0.0.1:8000/numbers/extract/?number=20
 Respuesta:
 
 {
@@ -254,11 +350,12 @@ Respuesta:
 }
 
 
+
 2. Número faltante
 GET /numbers/missing/
 
 
-Ejemplo:
+Ejemplo con curl (Linux/Mac)
 
 
 
@@ -266,7 +363,18 @@ Ejemplo:
 
 
 
+Ejemplo con PowerShell (Windows)
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/numbers/missing/" -Method GET
+
+
+Ejemplo con Postman
+
+Método: GET
+
+URL: http://127.0.0.1:8000/numbers/missing/
+
 Respuesta
+
 
  {
   "missing_number": 20
@@ -274,8 +382,30 @@ Respuesta
 
 
 
+
+
 3. Reiniciar conjunto
 POST /numbers/reset/
+
+
+Ejemplo con curl (Linux/Mac):
+
+
+curl -X POST "http://127.0.0.1:8000/numbers/reset/"
+
+
+Ejemplo con PowerShell (Windows):
+
+
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/numbers/reset/" -Method POST
+
+
+
+Ejemplo con Postman
+Método: POST
+
+
+URL: http://127.0.0.1:8000/numbers/reset/
 
 {
   "message": "Conjunto reiniciado correctamente"
@@ -287,7 +417,7 @@ POST /numbers/reset/
 
 Pruebas
 
-Estando en la carpeta:
+Estando en:
 
 cd NextTecnology/api_project
 
@@ -310,6 +440,12 @@ app/test/test_number.py::test_reset_allows_new_extraction PASSED
 
 Tecnologías
 Python 3.13
+
+
 FastAPI
+
+
 Uvicorn
+
+
 Pytest
