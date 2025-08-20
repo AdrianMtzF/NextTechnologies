@@ -201,39 +201,38 @@ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-08      | 5963.77
 cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-09      | 5859.00
 
 
-Pruebas del ETL
+#### Pruebas del ETL
+
 El proyecto incluye pruebas unitarias para validar cada etapa del pipeline ETL.
 
-
-Ejecutar las pruebas del ETL:
-
-
+**Ejecutar las pruebas del ETL:**
+```bash
 cd NextTecnology
 pytest -v etl_project/tests/test_etl.py
 
+
 Salida esperada:
-==================================================================================================================================================================================================================================
+
 platform win32 -- Python 3.13.0, pytest-8.2.0, pluggy-1.6.0
 cachedir: .pytest_cache
-rootdir: \NextTecnology
+rootdir: C:\Users\Adrian Mtz\PycharmProjects\NextTecnology
 plugins: anyio-4.10.0
 collected 3 items                                                                                                                                                                                                                  
 
-etl_project/tests/test_etl.py::test_load_raw_to_staging PASSED                                                                                                                                                               [ 33%]
-etl_project/tests/test_etl.py::test_transform_staging_to_cargo PASSED                                                                                                                                                        [ 66%]
-etl_project/tests/test_etl.py::test_disperse_cargo_to_companies_charges PASSED                                                                                                                                               [100%]
+etl_project/tests/test_etl.py::test_load_raw_to_staging PASSED                    [ 33%]
+etl_project/tests/test_etl.py::test_transform_staging_to_cargo PASSED             [ 66%]
+etl_project/tests/test_etl.py::test_disperse_cargo_to_companies_charges PASSED   [100%]
 
-======================================================================================================== 3 passed in 9.43s ========================================================================================================
-
-
+3 passed in 9.43s
 
 
 
-### Decisiones Técnicas
 
-- **PostgreSQL**: Elegido por robustez y fácil integración con Docker
-- **numeric(20,2)**: Para evitar problemas de overflow en montos
-- **Modelo normalizado**: 3 tablas (companies, charges, Cargo) para garantizar consistencia y facilitar reportes
+## Decisiones Técnicas
+
+- **PostgreSQL**: Base de datos robusta con fácil integración en Docker
+- **Tipos numéricos**: `numeric(20,2)` para manejar montos sin errores de precisión
+- **Estructura normalizada**: 3 tablas separadas para mantener datos consistentes y facilitar consultas
 
 ### Notas Adicionales
 
