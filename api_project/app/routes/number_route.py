@@ -9,7 +9,7 @@ numbers_set = NumbersSet()
 def extract_number(number: int = Query(..., ge=1, le=100)):
     try:
         numbers_set.extract(number)
-        return {"message": f"Número {number} extraído correctamente"}
+        return {"message": f"Number {number} successfully extracted"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -23,5 +23,4 @@ def get_missing_number():
 def reset_numbers():
     global numbers_set
     numbers_set = NumbersSet()
-    return {"message": "Conjunto reiniciado"}
-
+    return {"message": "Dataset reset"}

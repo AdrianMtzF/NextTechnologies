@@ -7,15 +7,15 @@ class NumbersSet:
 
     def extract(self, number: int):
         if self.extracted is not None:
-            raise ValueError("Ya se extrajo un número, reinicia el conjunto para extraer otro")
+            raise ValueError("A number has already been extracted, reset the dataset to extract another")
         if number < 1 or number > self.n:
-            raise ValueError(f"El número debe estar entre 1 y {self.n}")
+            raise ValueError(f"The number must be between 1 and {self.n}")
         self.numbers.remove(number)
         self.extracted = number
 
     def find_missing(self) -> int:
         if self.extracted is None:
-            raise ValueError("No se ha extraído ningún número todavía")
+            raise ValueError("No number has been extracted yet")
         expected_sum = self.n * (self.n + 1) // 2
         current_sum = sum(self.numbers)
         return expected_sum - current_sum
