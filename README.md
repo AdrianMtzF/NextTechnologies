@@ -1,5 +1,5 @@
 
-# NextTecnology — Prueba Técnica
+# Next Technologies — Prueba Técnica
 
 Este repositorio contiene dos proyectos independientes desarrollados como parte de una prueba técnica:
 
