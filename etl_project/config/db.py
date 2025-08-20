@@ -2,7 +2,7 @@ from __future__ import annotations
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from typing import Optional
-from etl_project.src.config import settings
+from etl_project.config.config import settings
 
 _engine: Optional[Engine] = None
 

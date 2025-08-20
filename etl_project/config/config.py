@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Carga .env desde la raíz del repo
 load_dotenv()
 
 def _req(name: str) -> str:

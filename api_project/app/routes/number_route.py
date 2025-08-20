@@ -17,3 +17,11 @@ def extract_number(number: int = Query(..., ge=1, le=100)):
 def get_missing_number():
     missing = numbers_set.find_missing()
     return {"missing_number": missing}
+
+
+@router.post("/reset/")
+def reset_numbers():
+    global numbers_set
+    numbers_set = NumbersSet()
+    return {"message": "Conjunto reiniciado"}
+
