@@ -187,13 +187,19 @@ SELECT * FROM public.v_company_daily_totals;
 
 ### Resultados Esperados
 
-| Etapa | Cantidad | Descripción |
-|-------|----------|-------------|
-| Staging | 10,000 | Filas insertadas |
-| Cargo | 9,992 | Filas válidas después de limpieza |
-| Companies | 3 | Compañías únicas |
-| Charges | 9,992 | Transacciones limpias |
-| Vista | - | Totales diarios agregados por compañía |
+        company_id        |  company_name  | transaction_day |     total_amount
+--------------------------+----------------+-----------------+----------------------
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-01      |              4150.04
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-02      |             17044.92
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-03      |              6735.66
+ 8f642dc67fccf861548dfe1c | Muebles chidos | 2019-01-03      |              3199.00
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-04      |              6349.69
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-05      |              5184.97
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-06      |              4005.46
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-07      |             26754.30
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-08      |              5963.77
+ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-09      |              5859.00
+
 
 ### Decisiones Técnicas
 
