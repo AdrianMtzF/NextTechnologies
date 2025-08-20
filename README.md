@@ -336,7 +336,7 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/numbers/extract/?number=20" -Metho
 **Respuesta:**
 ```json
 {
-  "message": "Número 20 extraído correctamente"
+  "message": "Number 20 successfully extracted"
 }
 ```
 
@@ -386,7 +386,7 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/numbers/reset/" -Method POST
 **Respuesta:**
 ```json
 {
-  "message": "Conjunto reiniciado correctamente"
+  "message": "Dataset reset"
 }
 ```
 
