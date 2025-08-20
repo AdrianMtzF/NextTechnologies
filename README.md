@@ -201,6 +201,33 @@ cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-08      | 5963.77
 cbf1c8b09cd5b549416d49d2 | MiPasajefy     | 2019-01-09      | 5859.00
 
 
+Pruebas del ETL
+El proyecto incluye pruebas unitarias para validar cada etapa del pipeline ETL.
+
+
+Ejecutar las pruebas del ETL:
+
+
+cd NextTecnology
+pytest -v etl_project/tests/test_etl.py
+
+Salida esperada:
+==================================================================================================================================================================================================================================
+platform win32 -- Python 3.13.0, pytest-8.2.0, pluggy-1.6.0
+cachedir: .pytest_cache
+rootdir: \NextTecnology
+plugins: anyio-4.10.0
+collected 3 items                                                                                                                                                                                                                  
+
+etl_project/tests/test_etl.py::test_load_raw_to_staging PASSED                                                                                                                                                               [ 33%]
+etl_project/tests/test_etl.py::test_transform_staging_to_cargo PASSED                                                                                                                                                        [ 66%]
+etl_project/tests/test_etl.py::test_disperse_cargo_to_companies_charges PASSED                                                                                                                                               [100%]
+
+======================================================================================================== 3 passed in 9.43s ========================================================================================================
+
+
+
+
 
 ### Decisiones Técnicas
 
