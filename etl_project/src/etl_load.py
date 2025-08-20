@@ -1,4 +1,3 @@
-# etl_project/src/etl_load.py
 from __future__ import annotations
 import pandas as pd
 from sqlalchemy import text

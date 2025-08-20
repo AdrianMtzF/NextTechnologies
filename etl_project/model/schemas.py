@@ -1,5 +1,5 @@
 """
-📌 Definiciones de esquemas y tablas (DDL)
+Definiciones de esquemas y tablas (DDL)
 =========================================
 """
 

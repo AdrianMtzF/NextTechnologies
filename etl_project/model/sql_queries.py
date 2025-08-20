@@ -1,8 +1,3 @@
-"""
-SQL Queries para operaciones ETL (DML)
-=========================================
-
-"""
 
 # ================
 # Limpieza (TRUNCATE)
